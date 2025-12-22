@@ -1,7 +1,5 @@
 ## 🏗️ Request-response-life-cycle
 
-The project follows a layered architecture commonly used in production:
-
 Client  
 → Plugins  
 → Hooks  
@@ -48,8 +46,6 @@ fastify-ts-api/
 ├── package-lock.json                # Dependency lock file
 ├── tsconfig.json                    # TypeScript configuration
 └── README.md                        # Project documentation
-
----
 
 ### ▶️ Start the API
 ```bash
