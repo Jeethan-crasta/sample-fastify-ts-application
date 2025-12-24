@@ -4,12 +4,14 @@ async function start() {
     const app= await buildApp();
 
     try{
+        const PORT = Number(process.env.PORT) || 3000;
+        
         await app.listen({
-        port: 3000,
+        port: PORT,
         host: "0.0.0.0"
         });
 
-        console.log('Server is running at http://localhost:3000');
+        app.log.info(`Server started on port ${PORT}`);
     }catch(err){
         app.log.error(err);
         process.exit(1);
