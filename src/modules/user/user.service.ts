@@ -5,9 +5,6 @@ const users:User[] = [];
 
 export class UserService {
     async createUser(data:CreateUserInput):Promise<User> {
-        if(!data.email){
-            throw new AppError("Email is required",400);
-        }
         const newUser:User = {
             id: users.length + 1,
             ...data
