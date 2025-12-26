@@ -18,6 +18,10 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+# Set production environment
+ENV NODE_ENV=production
+
+
 # Install only production dependencies by omitting dev dependencies
 COPY package*.json ./
 RUN npm ci --omit=dev

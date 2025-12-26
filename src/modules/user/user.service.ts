@@ -1,18 +1,48 @@
-import type { CreateUserInput,User} from "./user.types";
+import type { CreateUserInput, User } from "./user.types";
 import { AppError } from "../../utils/AppError";
-
-const users:User[] = [];
+import { Pool } from "pg";
 
 export class UserService {
-    async createUser(data:CreateUserInput):Promise<User> {
-        const newUser:User = {
-            id: users.length + 1,
-            ...data
-        };
-        users.push(newUser);
-        return newUser;
+  constructor(private readonly db: Pool) {}
+
+  async createUser(data: CreateUserInput): Promise<User> {
+    try {
+      const { rows } = await this.db.query<User>(
+        `
+        INSERT INTO users (name, email)
+        VALUES ($1, $2)
+        RETURNING id, name, email
+        `,
+        [data.name, data.email]
+      );
+
+      return rows[0];
+    } catch (error: unknown) {
+      if ((error as any)?.code === "23505") {
+        throw new AppError("User already exists", 409);
+      }
+      throw new AppError("Failed to create user", 500);
     }
-    async getUsers():Promise<User[]> {
-        return users;
+  }
+
+  async getUsers(limit = 20, offset = 0): Promise<User[]> {
+    limit = Math.min(Math.max(limit, 1), 100);
+    offset = Math.max(offset, 0);
+    
+    try {
+      const { rows } = await this.db.query<User>(
+        `
+        SELECT id, name, email
+        FROM users
+        ORDER BY id
+        LIMIT $1 OFFSET $2
+        `,
+        [limit, offset]
+      );
+
+      return rows;
+    } catch {
+      throw new AppError("Failed to fetch users", 500);
     }
+  }
 }

@@ -1,21 +1,21 @@
 import {buildApp} from './app';
 
 async function start() {
-    const app= await buildApp();
+  const app = buildApp();
 
-    try{
-        const PORT = Number(process.env.PORT) || 3000;
-        
-        await app.listen({
-        port: PORT,
-        host: "0.0.0.0"
-        });
+  const PORT = Number(process.env.PORT) || 3000;
 
-        app.log.info(`Server started on port ${PORT}`);
-    }catch(err){
-        app.log.error(err);
-        process.exit(1);
-    }
+  try {
+    await app.listen({ port: PORT, host: "0.0.0.0" });
+    app.log.info(`Server started on port ${PORT}`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
 }
+
+process.on("SIGTERM", async () => {
+  process.exit(0);
+});
 
 start();

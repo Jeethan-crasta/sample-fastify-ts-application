@@ -1,14 +1,14 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { UserService } from "./user.service";
 
-const userService = new UserService();
 
 export class UserController {
+  constructor(private userService: UserService) {}
   async create(
     request: FastifyRequest,
     reply: FastifyReply
   ) {
-    const user = await userService.createUser(request.body as any);
+    const user = await this.userService.createUser(request.body as any);
     reply.status(201).send(user);
   }
 
@@ -16,7 +16,7 @@ export class UserController {
     request: FastifyRequest,
     reply: FastifyReply
   ) {
-    const users = await userService.getUsers();
+    const users = await this.userService.getUsers();
     reply.send(users);
   }
 }

@@ -1,13 +1,14 @@
 import Fastify from "fastify";
 import errorHandler from "./plugins/error-handler";
 import userRoutes from "./modules/user/user.route";
+import dbPlugin from "./plugins/db";
 
-export async function buildApp() {
-    const app = Fastify({logger: true});
+export function buildApp() {
+  const app = Fastify({ logger: true });
 
-    await app.register(errorHandler);
-    await app.register(userRoutes, {prefix: "/api"});
+  app.register(errorHandler);
+  app.register(dbPlugin);
+  app.register(userRoutes, { prefix: "/api" });
 
-    return app;
-    
+  return app;
 }
