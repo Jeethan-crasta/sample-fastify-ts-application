@@ -7,7 +7,11 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "vitest"
+
+
+    "test": "vitest",
+    "test:unit": "vitest run src/tests/unit",
+    "test:integration": "vitest run src/tests/integration"
   },
   "keywords": [],
   "author": "",
