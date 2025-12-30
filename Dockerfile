@@ -32,3 +32,16 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3000
 
 CMD ["node", "dist/server.js"]
+
+# -------- Test stage --------
+FROM node:20-alpine AS test
+
+WORKDIR /app
+ENV NODE_ENV=test
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+CMD ["npm", "test"]
+
