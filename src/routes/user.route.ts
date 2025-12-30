@@ -1,8 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
-import { UserController } from "./user.controller";
-import { createUserSchema } from "./user.schema";
-import { CreateUserBody } from "./user.types";
-import { UserService } from "./user.service";
+import { UserController } from "../controller/user.controller";
+import { createUserSchema } from "../schemas/user.schema";
+import { CreateUserBody } from "../types/user.types";
+import { UserService } from "../service/user.service";
 
 const userRoutes: FastifyPluginAsync = async (app) => {
   const userService = new UserService(app.db,app.log);

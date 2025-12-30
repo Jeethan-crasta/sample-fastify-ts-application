@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import errorHandler from "./plugins/error-handler";
-import userRoutes from "./modules/user/user.route";
+import userRoutes from "./routes/user.route";
 import dbPlugin from "./plugins/db";
 import swaggerPlugin from "./plugins/swagger";
 

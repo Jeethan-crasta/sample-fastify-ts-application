@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { UserService } from "../../modules/user/user.service";
+import { UserService } from "../../service/user.service";
 import { AppError } from "../../utils/AppError";
 import type { Pool } from "pg";
 import type { FastifyBaseLogger } from "fastify";

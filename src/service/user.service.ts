@@ -1,8 +1,8 @@
-import type { CreateUserInput, User } from "./user.types";
-import { AppError } from "../../utils/AppError";
+import type { CreateUserInput, User } from "../types/user.types";
+import { AppError } from "../utils/AppError";
 import { Pool } from "pg";
 import type { FastifyBaseLogger } from "fastify";
-import { callUserCreatedWebhook } from "../../utils/userCreatedWebhook";
+import { callUserCreatedWebhook } from "../utils/userCreatedWebhook";
 
 export class UserService {
   constructor(
