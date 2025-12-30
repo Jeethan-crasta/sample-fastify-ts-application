@@ -1,9 +1,14 @@
 import type { CreateUserInput, User } from "./user.types";
 import { AppError } from "../../utils/AppError";
 import { Pool } from "pg";
+import type { FastifyBaseLogger } from "fastify";
+import { callUserCreatedWebhook } from "../../utils/userCreatedWebhook";
 
 export class UserService {
-  constructor(private readonly db: Pool) {}
+  constructor(
+    private readonly db: Pool,
+    private readonly logger: FastifyBaseLogger
+  ) {}
 
   async createUser(data: CreateUserInput): Promise<User> {
     try {
@@ -16,7 +21,13 @@ export class UserService {
         [data.name, data.email]
       );
 
-      return rows[0];
+      const user = rows[0];
+
+      // webhook call
+      callUserCreatedWebhook(this.logger);
+
+      return user;
+
     } catch (error: unknown) {
       if ((error as any)?.code === "23505") {
         throw new AppError("User already exists", 409);
