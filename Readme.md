@@ -121,8 +121,6 @@ openapi documentation version used is **OpenAPI 3.0.3**.
 
 > The Swagger UI is only enabled in dev environments.
 
----
-
 ## Application Schemas
 
 - **Schemas:** [schemas](https://github.com/Jeethan-crasta/sample-fastify-ts-application/tree/main/src/schemas)
