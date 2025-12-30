@@ -1,4 +1,10 @@
+
+# sample-fastify-ts-application
+
+This directory contains sample fastify application.
+
 ## Request-response-life-cycle
+
 
 Client  
 → Plugins  
@@ -6,9 +12,10 @@ Client
 → Routes  
 → Controller  
 → Service  
-→ (In-memory)  
+→ Database(containerized PostgreSQL)  
 → Controller  
-→ Reply  
+→ Reply 
+ 
 
 
 
@@ -18,40 +25,58 @@ Client
 
 ```text
 fastify-ts-api/
-├── node_modules/
+├── db/
+│   └── init.sql                    # Database initialization
 │
 ├── src/
-│   ├── modules/
-│   │   └── user/
-│   │       ├── user.controller.ts   # Handles HTTP request/response
-│   │       ├── user.route.ts        # Route definitions
-│   │       ├── user.schema.ts       # Fastify JSON schemas (validation)
-│   │       ├── user.service.ts      # Business logic
-│   │       └── user.types.ts        # TypeScript types & interfaces
+│   ├── controller/
+│   │   └── user.controller.ts      # HTTP request/response handling
+│   │
+│   ├── routes/
+│   │   └── user.route.ts           # Route definitions
+│   │
+│   ├── schemas/
+│   │   └── user.schema.ts          # Fastify JSON schemas
+│   │
+│   ├── service/
+│   │   └── user.service.ts         # Business logic
+│   │
+│   ├── types/
+│   │   ├── fastify.d.ts            # Fastify type augmentation
+│   │   └── user.types.ts           # Domain types & interfaces
 │   │
 │   ├── plugins/
-│   │   └── error-handler.ts         # Global error handling plugin
+│   │   ├── db.ts                   # PostgreSQL plugin
+│   │   ├── error-handler.ts        # Global error handler
+│   │   └── swagger.ts              # Swagger / OpenAPI plugin
 │   │
 │   ├── utils/
-│   │   └── AppError.ts              # Custom application error class
+│   │   ├── AppError.ts              # Custom application error
+│   │   └── userCreatedWebhook.ts    # Webhook utility
 │   │
-│   ├── app.ts                       # Builds and configures Fastify instance
+│   ├── docs/
+│   │   └── openapi.yaml             # OpenAPI 3.0.3 specification
+│   │
+│   ├── tests/
+│   │   ├── unit/                    # Unit tests (mocked deps)
+│   │   └── integration/             # Integration tests (real DB + HTTP)
+│   │
+│   ├── app.ts                       # Fastify app builder
 │   └── server.ts                    # Application entry point
 │
-├── .dockerignore                    # Files ignored by Docker
-├── .gitignore                       # Files ignored by Git
-├── docker-compose.yml               # Docker Compose configuration
-├── Dockerfile                       # Docker image definition
-├── package.json                     # Dependencies and scripts
-├── package-lock.json                # Dependency lock file
-├── tsconfig.json                    # TypeScript configuration
-└── README.md                        # Project documentation
+├── docker-compose.yml               # Production Docker Compose
+├── docker-compose.test.yml          # Test Docker Compose
+├── Dockerfile                       # Multi-stage Dockerfile
+├── vitest.config.ts                 # Vitest configuration
+├── package.json
+├── tsconfig.json
+└── README.md
 
 ```
 
 ## Docker API Management
 
-### Docker start API command
+### Start API (Production)
 ```bash
 docker compose up --build -d
 ```
@@ -61,70 +86,45 @@ docker compose up --build -d
 docker compose down
 ```
 
+# Application Testing
+
+### Unit Tests
+
+```bash
+npm run test:unit
+```
+
+### Integration Tests
+
+```bash
+docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+```
+### Test Scripts
+
+```bash
+"scripts": {
+  "test": "vitest",
+  "test:unit": "vitest run src/tests/unit",
+  "test:integration": "vitest run src/tests/integration"
+}
+```
+
 ## API Documentation
 
-**Base URL:** `http://localhost:3000/api`
+### OpenAPI Specification
+openapi documentation version used is **OpenAPI 3.0.3**.
 
-### Health Check
+- **OpenAPI YAML file:**  [openapi.yaml](https://github.com/Jeethan-crasta/sample-fastify-ts-application/blob/main/src/docs/openapi.yaml)
 
-* **Endpoint:** `GET /api/health`
-* **Action:**
-    ```bash
-    curl -X GET http://localhost:3000/api/health
-    ```
-* **Success Response (200 OK):**
-    ```json
-    {
-      "status": "ok"
-    }
-    ```
+- **Swagger UI:**  
+  http://localhost:3000/docs
 
-### Create User
+> The Swagger UI is only enabled in dev environments.
 
-* **Endpoint:** `POST /api/users`
-* **Headers:** `Content-Type: application/json`
-* **Action:**
-    ```bash
-    curl -X POST http://localhost:3000/api/users \
-      -H "Content-Type: application/json" \
-      -d '{
-        "name": "John Doe",
-        "email": "john.doe@test.com"
-      }'
-    ```
-* **Success Response (201 Created):**
-    ```json
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john.doe@test.com"
-    }
-    ```
-* **Validation Error (400 Bad Request):**
-    ```json
-    {
-      "statusCode": 400,
-      "error": "Bad Request",
-      "message": "body must have required property 'email'"
-    }
-    ```
+---
 
-### Get All Users
+## Application Schemas
 
-* **Endpoint:** `GET /api/users`
-* **Action:**
-    ```bash
-    curl -X GET http://localhost:3000/api/users
-    ```
-* **Success Response (200 OK):**
-    ```json
-    [
-      {
-        "id": 1,
-        "name": "John Doe",
-        "email": "john.doe@test.com"
-      }
-    ]
-    ```
+- **Schemas:** [schemas](https://github.com/Jeethan-crasta/sample-fastify-ts-application/tree/main/src/schemas)
 
 
